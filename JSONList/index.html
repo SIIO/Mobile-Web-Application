@@ -1,0 +1,175 @@
+<!--
+* Author: Shane Walsh
+* Assignment: WE41 Mobile Web Applications, Digital Skills Academy
+* Date : 2016/08/14
+* Ref: DSA Mobile & Web Application Lecture and Workshop material
+* Ref: http://www.w3schools.com/jquerymobile/
+* Ref: http://www.w3schools.com/jquerymobile/jquerymobile_panels.asp
+* Ref: https://themeroller.jquerymobile.com
+* Ref: http://api.jquery.com/jquery.getjson/
+* Ref: https://www.sitepoint.com/jquery-each-function-examples/
+* Ref: http://www.w3schools.com/jquery/misc_each.asp
+* Ref: http://jsfiddle.net/gajotres/8uac7/
+* Ref: https://api.jquerymobile.com/pagecontainer/
+* Ref: http://jsfiddle.net/palestinian/ytt9b/
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv="x-ua-compatible" content="IE=9" /><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>jQuery Mobile JSON Assignment</title>
+    
+    <!-- Themeroller theme + relevant jQuery/jQuery Mobile CSS -->
+    <link rel="stylesheet" href="themes/greenTheme.min.css" />
+    <link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+
+    <!--jQuery/jQuery Mobile JS -->
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  </head>
+
+<body>
+
+		<!--========== Index Page ==============-->
+
+        <div data-role="page" id="index_page"> 
+
+            <!--header + Side Panel Icon for Index Page-->
+            <div data-role="header" data-theme="a">
+                <h1>Planetary Search</h1>
+                <a href="#sideMenuIndex"><span> <img class="img-responsive" src="themes/images/icons-png/bars-black.png"></span></a>
+            </div>
+
+            <!-- Side Panel for Index Page -->
+            <div data-role="panel" class="panel left" id="sideMenuIndex" data-swipe-close="true" data-display="overlay">
+
+                <div class="content" align="center">
+                <h4>About</h4>
+                <hr class="small">
+                <p>Search the Planets in our Solar System.</p>
+                <p>Click the appropriate link to reveal details about that planet</p>
+                <hr>
+                <p>To close this panel click outside the panel, swipe to close or click close button below</p>
+                <a href="#pageone" data-rel="close" class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-left">Close panel</a>
+                </div>
+
+            </div>
+
+            <!-- List -->
+            <div data-role="content">
+                <ul data-role="listview" data-inset="true" id="myList" data-filter="true">
+                	<!-- List populated from JSON file -->	
+                </ul>
+            </div>
+
+            <!-- Footer -->
+            <div data-role="footer">
+                <h3>DSA 2016</h3>
+            </div>
+        </div>
+
+
+        <!--======== Details Page ===============-->
+
+        <div data-role="page" id="details_page">
+
+            <!-- Header + Side Panel Icon for Details Page -->
+    		<div data-role="header" data-theme="a">
+            <h1>Planet Details</h1>
+            <a href="#sideMenuDetails"><span><img class="img-responsive" src="themes/images/icons-png/bars-black.png"></span></a>
+    		</div>
+
+            <!-- Side Panel for Details Page -->
+            <div data-role="panel" class="panel left" id="sideMenuDetails" data-swipe-close="true" data-display="overlay">
+
+                <div class="ui-content" align="center">
+                <h4>Panel Info</h4>
+                <hr>
+                <p>Hit the back button at end of page to go back to search list.</p>
+                <hr>
+                <p>To close this panel click outside the panel, swipe to close or click close button below</p>
+                <a href="#pageone" data-rel="close" class="ui-btn ui-btn-inline ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-left">Close panel</a>
+                </div>
+
+            </div>
+
+                <!-- Content populated from JSON file -->
+    			<div align="center" class="ui-content" style="font-family: 'Century Gothic';">
+
+                        <span>
+                            <h2 id="dataHeading"><!-- populated by JSON--></h2>
+                            <h3 id="diameterID"><!-- populated by JSON--></h3>
+                            <div id="imgID"><!-- populated by JSON--></div>
+                            <br>
+                            <p id="paraID" class="lead"><!-- populated by JSON--></p>
+                        </span>
+
+                        <!-- Back Navigation -->
+                        <div align="center">
+                        <a href="#" data-rel="back" data-role="button" data-icon="back" data-mini="true" data-inline="true">Go back</a>
+                        </div>
+
+    			</div>
+
+                <!-- Footer -->
+                 <div data-role="footer">
+                    <h3>DSA 2016</h3>
+                </div>
+		</div>
+
+</body>
+
+    <!--=========== jQuery Mobile Script =============-->
+    <script type="text/javascript">
+      
+     $(document).on("pagebeforeshow", "#index_page", function () {  // Document ready event. 
+
+           $.getJSON('planetInfo.json', function (data) {           /* Get data from JSON file and pass data as a JS object via variable 'data' |**** This portion needs to be dynamic if the app were using a server side live data feed ****/
+                  
+
+           		var output = '';                           // Set output as an empty string.
+
+           		$.each(data, function (index, value) {     // For each of the values in JSON file do the following: 
+
+                    // Create list items and attach data attributes to list item.
+             		output += '<li><a class="listValue" data-name="' + value.name +'" data-size="' + value.size +'" data-description="' + value.description + '" data-image="' + value.image + '" data-diameter="' + value.diameter + '">' + value.name + '</a></li>';     
+
+
+            	$('#myList').html(output).listview("refresh"); // Populate list and refresh after each occurence. 
+
+
+                //List item click function with associated 'listValue' class
+                $("#myList> li").on("click",".listValue", function() {
+
+                // Retrieve data attributes from List items and assign to variable.
+                var name = $(this).data('name');
+                var size = $(this).data('size');
+                var description = $(this).data('description');
+                var image = $(this).data('image');
+                var diameter = $(this).data('diameter');
+
+                // Append data attribute variables to appropriate HTML elements. 
+                $("#dataHeading").empty().append(name);
+                $("#diameterID").empty().append('Diameter: ' + diameter);
+                $("#imgID").empty().append('<img src="images/' + image + '">');
+                $("#paraID").empty().append(description); 
+
+                // mobile-pagecontainer selector to change page with flip transition effect. 
+                $(":mobile-pagecontainer").pagecontainer("change", "#details_page",  { transition: "flip" });
+
+                });
+                
+            });
+
+        });
+
+    });
+   
+     </script>
+
+</html>
